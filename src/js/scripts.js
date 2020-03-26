@@ -6,17 +6,18 @@
 function afficheAdherents(nomAdherent, idAdherent) {
 	viderAdherents();
 	let a = document.getElementById('listeAdherents');
+	let selectadherent = document.getElementById("selectadherent");
 	let ul = document.createElement('ul');
 	for (let i = 0; i < nomAdherent.length; i++) {
-		let li = document.createElement('li');
+		let li = document.createElement('li')
 		li.onclick = function() {maRequeteAJAX_LivresEmpruntesByAdherent(idAdherent[i],nomAdherent[i]);}
-		li.innerHTML = idAdherent[i] + "-" + nomAdherent[i];
+		li.innerHTML = idAdherent[i] + "-" + escapeHtml(nomAdherent[i]);
 		li.style.cursor = "pointer";
 		ul.appendChild(li);
 	}
 	a.appendChild(ul);
-	
-}
+
+	}
 
 function afficheLivresDisponibles(titreLivre,idLivre) {
 	viderLivresDisponibles();
@@ -25,7 +26,7 @@ function afficheLivresDisponibles(titreLivre,idLivre) {
 	for (let i = 0; i < titreLivre.length; i++) {
 		let li = document.createElement('li');
 		li.onclick = function() {construit_infobulle_emprunt(idLivre[i],titreLivre[i]);}
-		li.innerHTML = idLivre[i] + "-" + titreLivre[i];
+		li.innerHTML = idLivre[i] + "-" + escapeHtml(titreLivre[i]);
 		li.style.cursor = "pointer";
 		ul.appendChild(li);
 	}
@@ -39,12 +40,14 @@ function afficheLivresEmpruntes(titreLivre,idLivre) {
 	for (let i = 0; i < titreLivre.length; i++) {
 		let li = document.createElement('li');
 		li.onclick = function() {maRequeteAJAX_AdherentByIdLivre(idLivre[i]);}
-		li.innerHTML = idLivre[i] + "-" + titreLivre[i];
+		li.innerHTML = idLivre[i] + "-" + escapeHtml(titreLivre[i]);
 		li.style.cursor = "pointer";
 		ul.appendChild(li);
 	}
 	le.appendChild(ul);
 }
+
+
 
 function viderAdherents() {
 	let a = document.getElementById('listeAdherents');
@@ -147,7 +150,7 @@ function maRequeteAJAX_LivresEmpruntes() {
 // LES FONCTIONS CREER //
 
 function creerAdherent(nomAdherent) {
-	let url = "php/insertAdherent.php?nomAdherent=" + nomAdherent;
+	let url = "php/insertAdherent.php?nomAdherent=" + encodeURIComponent(nomAdherent);
 	let requete = new XMLHttpRequest();
 	requete.open("GET", url, true);
 	requete.addEventListener("load",function () {
@@ -157,7 +160,7 @@ function creerAdherent(nomAdherent) {
 }
 
 function creerLivre(titreLivre) {
-	let url = "php/insertLivre.php?titreLivre=" + titreLivre;
+	let url = "php/insertLivre.php?titreLivre=" + encodeURIComponent(titreLivre);
 	let requete = new XMLHttpRequest();
 	requete.open("GET", url, true);
 	requete.addEventListener("load",function () {
@@ -167,7 +170,7 @@ function creerLivre(titreLivre) {
 }
 
 function creerEmprunt(idAdherent,idLivre) {
-	let url = "php/insertEmprunt.php?idAdherent=" + idAdherent + "&idLivre=" + idLivre;
+	let url = "php/insertEmprunt.php?idAdherent=" + encodeURIComponent(idAdherent) + "&idLivre=" + encodeURIComponent(idLivre);
 	let requete = new XMLHttpRequest();
 	requete.open("GET", url, true);
 	requete.addEventListener("load",function () {
@@ -182,7 +185,7 @@ function creerEmprunt(idAdherent,idLivre) {
 // LES FONCTIONS DELETE //
 
 function deleteEmprunt(idLivre) {
-	let url = "php/deleteEmprunt.php?idLivre=" + idLivre;
+	let url = "php/deleteEmprunt.php?idLivre=" + encodeURIComponent(idLivre);
 	let requete = new XMLHttpRequest();
 	requete.open("GET", url, true);
 	requete.addEventListener("load",function () {
@@ -215,7 +218,7 @@ al.onclick = function() {
 // LES FONCTIONS POUR INFOBULLES //
 
 function requeteAJAX_LivresEmpruntesByAdherent(idAdherent,nomAdherent,callback) {
-	let url = "php/requeteLivreEmprunteByAdherent.php?idAdherent=" + idAdherent;
+	let url = "php/requeteLivreEmprunteByAdherent.php?idAdherent=" + encodeURIComponent(idAdherent);
 	let requete = new XMLHttpRequest();
 	requete.open("GET", url, true);
 	requete.addEventListener("load", function () {
@@ -225,7 +228,7 @@ function requeteAJAX_LivresEmpruntesByAdherent(idAdherent,nomAdherent,callback) 
 }
 
 function requeteAJAX_AdherentByIdLivre(idLivre,callback) {
-	let url = "php/requeteAdherentByLivre.php?idLivre=" + idLivre;
+	let url = "php/requeteAdherentByLivre.php?idLivre=" + encodeURIComponent(idLivre);
 	let requete = new XMLHttpRequest();
 	requete.open("GET", url, true);
 	requete.addEventListener("load", function () {
@@ -261,115 +264,44 @@ function maRequeteAJAX_AdherentByIdLivre(idLivre) {
 // INFOBULLES //
 
 function construit_infobulle_adherent(nomAdherent,tab_titre) {
-	detruire_infobulle();
 
-	let info = document.createElement('div');
-	info.id = "bulle";
-	let info_1 = document.createElement('div');
-	let info_2 = document.createElement('div');
-	info.style.backgroundColor = "white";
-	info.style.border = "solid 2px black";
-
-	let ul = document.createElement('ul');
-	let p = document.createElement('p');
-	p.innerHTML = nomAdherent + " a " + tab_titre.length + " emprunt(s) en ce moment :";
-	p.style.textAlign = "center";
-
+	let listelivre = "";
 	for (var i = 0; i < tab_titre.length; i++) {
-		let li = document.createElement('li');
-		li.innerHTML = tab_titre[i];
-		ul.appendChild(li);
+		listelivre = listelivre+"-"+tab_titre[i]+'\n';
 	}
-	ul.style.marginLeft = "35%";
-	info_1.appendChild(p);
-	info_1.appendChild(ul);
 
-	info_2.innerHTML = '<input type="button" value="OK" onclick="detruire_infobulle();">';
+	alert(nomAdherent + " a " + tab_titre.length + " emprunt(s) en ce moment :\n\n"+listelivre);
 
-	info.appendChild(info_1);
-	info.appendChild(info_2);
-
-	document.body.appendChild(info);
 }
 
 function construit_infobulle_emprunt(idLivre,titreLivre) {
-	detruire_infobulle();
 
-	let info = document.createElement('div');
-	let info_1 = document.createElement('div');
-	let info_2 = document.createElement('div');
-
-	info.id = "bulle";
-	info.style.backgroundColor = "white";
-	info.style.border = "solid 2px black";
-
-	let p_1 = document.createElement('p');
-	let p_2 = document.createElement('p');
-	let input = document.createElement('input');
-	input.id = "idPourEmprunt";
-	p_1.innerHTML = "prêt de \"" + titreLivre + "\".";
-	p_2.innerHTML = "n° de l'emprunteur ?";
-
-	info_1.appendChild(p_1);
-	info_1.appendChild(p_2);
-	info_1.appendChild(input);
-	info_1.style.textAlign = "center";
-
-	info_2.innerHTML = '<input type="button" value="Annuler" onclick="detruire_infobulle();">';
-	info_2.innerHTML += '<input type="button" id="emprunter" value="OK">';
-
-	info.appendChild(info_1);
-	info.appendChild(info_2);
-
-	document.body.appendChild(info);
-
-	let e = document.getElementById("emprunter");
-	e.onclick = function() {
-		creerEmprunt(idPourEmprunt.value,idLivre);
-		detruire_infobulle();
-	};
+	let reponse = prompt("prêt de \"" + titreLivre + "\"."+'\n'+"n° de l'emprunteur ?");
+	if(reponse!=null) {
+		creerEmprunt(reponse, idLivre);
+	}
 }
 
 function construit_infobulle_deleteEmprunt(idLivre, nomAdherent) {
-	detruire_infobulle();
 
-	let info = document.createElement('div');
-	let info_1 = document.createElement('div');
-	let info_2 = document.createElement('div');
 
-	info.id = "bulle";
-	info.style.backgroundColor = "white";
-	info.style.border = "solid 2px black";
-
-	let p_1 = document.createElement('p');
-	let p_2 = document.createElement('p');
-	p_1.innerHTML = "Livre prêté a " + nomAdherent;
-	p_2.innerHTML = "Retour de ce livre ?";
-
-	info_1.appendChild(p_1);
-	info_1.appendChild(p_2);
-	info_1.style.textAlign = "center";
-
-	info_2.innerHTML = '<input type="button" value="Annuler" onclick="detruire_infobulle();">';
-	info_2.innerHTML += '<input type="button" id="deleteEmprunt" value="OK">';
-
-	info.appendChild(info_1);
-	info.appendChild(info_2);
-
-	document.body.appendChild(info);
-
-	let de = document.getElementById("deleteEmprunt");
-	de.onclick = function() {
+	if(confirm("Livre prêté à "+nomAdherent+'\n'+"Retour de ce livre ?")){
 		deleteEmprunt(idLivre);
-		detruire_infobulle();
-	};
+	}
+
+
 }
 
-function detruire_infobulle() {
-	let info = document.getElementById('bulle');
-	if (info != null) {
-		document.body.removeChild(info);
-	}
+function escapeHtml(text) {
+	//equivalent du HTMLSpecialChars de php (https://stackoverflow.com/questions/1787322/htmlspecialchars-equivalent-in-javascript)
+	var map = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#039;'
+	};
+	return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
 

@@ -146,7 +146,36 @@ class Model {
         }
     }
 
+    public static function deleteAdherent($idAdherent){
+        try {
+            $sql = "DELETE FROM adherent WHERE idAdherent=:idAdherent_tag";
+            $rep_prep = Model::$pdo->prepare($sql);
+            $values = Array('idAdherent_tag' => $idAdherent);
+            $rep_prep->execute($values);
+        }
+        catch(PDOException $e) {
+            echo $e->getMessage();
+            die("Erreur lors de la recherche dans la base de données.");
+        }
+    }
+
+    public static function deleteLivre($idLivre){
+        try {
+            $sql = "DELETE FROM livre WHERE idLivre=:idLivre_tag";
+            $rep_prep = Model::$pdo->prepare($sql);
+            $values = Array('idLivre_tag' => $idLivre);
+            $rep_prep->execute($values);
+        }
+        catch(PDOException $e) {
+            echo $e->getMessage();
+            die("Erreur lors de la recherche dans la base de données.");
+        }
+    }
+
+
+
 }
+
 
 // on initialise la connexion $pdo
 Model::init_pdo();

@@ -5,7 +5,7 @@ body {
 	padding:0px 20px 20px 20px;
 	border:solid 2px grey;
 }
-#enregistrements, #listes {
+#enregistrements, #listes, #delete {
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
@@ -16,6 +16,12 @@ body {
 }
 #ajoutLivre {
 	width:50%;
+}
+#deleteAdherent{
+	width: 50%;
+}
+#deleteLivre{
+	width: 50%;
 }
 #adh {
 	width:20%;
@@ -51,7 +57,7 @@ li {
 li:hover {
 	background-color: lightgrey;
 }
-input {
+input	 {
 	padding:5px;
 	font-size: 1.2em;
 }
