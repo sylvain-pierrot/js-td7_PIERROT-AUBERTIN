@@ -6,7 +6,6 @@
 function afficheAdherents(nomAdherent, idAdherent) {
 	viderAdherents();
 	let a = document.getElementById('listeAdherents');
-	let selectadherent = document.getElementById("selectadherent");
 	let ul = document.createElement('ul');
 	for (let i = 0; i < nomAdherent.length; i++) {
 		let li = document.createElement('li')
